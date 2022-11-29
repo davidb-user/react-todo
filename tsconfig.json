@@ -13,7 +13,8 @@
 		"outDir": "/build",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
-		"jsx": "react-jsx"
+		"jsx": "react-jsx",
+		"strictNullChecks": false
 	},
 	"include": ["src"],
 	"ts-node": {
