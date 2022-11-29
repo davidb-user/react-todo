@@ -1,6 +1,7 @@
 import type { Config } from "jest";
 
 const jestConfig: Config = {
+	setupFiles:["./src/setupTests.ts"],
 	rootDir: ".",
 	transform: {
 		"^.+\\.(ts|js)x?$": "ts-jest",
@@ -11,6 +12,7 @@ const jestConfig: Config = {
 	moduleNameMapper: {
 		"\\.(css|less)$": "identity-obj-proxy",
 	},
+	testEnvironment: "jsdom",
 };
 
 export default jestConfig;

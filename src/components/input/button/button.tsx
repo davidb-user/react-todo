@@ -2,7 +2,7 @@ import React from "react";
 import "./button.css";
 
 interface ButtonProps {
-	isSelected: boolean;
+	isSelected?: boolean;
 }
 
 class Button extends React.Component<ButtonProps> {

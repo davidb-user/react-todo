@@ -11,8 +11,6 @@
 		"test": "jest"
 	},
 	"devDependencies": {
-		"@testing-library/react": "^13.4.0",
-		"@types/enzyme": "^3.10.12",
 		"@types/jest": "^29.2.3",
 		"@types/node": "^16.18.3",
 		"@types/react": "^18.0.25",
@@ -20,12 +18,13 @@
 		"@typescript-eslint/eslint-plugin": "^5.44.0",
 		"@typescript-eslint/parser": "^5.44.0",
 		"css-loader": "^6.7.2",
-		"enzyme": "^3.11.0",
 		"eslint": "^8.28.0",
 		"eslint-plugin-react": "^7.31.11",
 		"html-webpack-plugin": "^5.5.0",
 		"identity-obj-proxy": "^3.0.0",
 		"jest": "^29.3.1",
+		"jest-environment-jsdom": "^29.3.1",
+		"jsdom": "^20.0.3",
 		"ts-jest": "^29.0.3",
 		"ts-loader": "^9.4.1",
 		"ts-node": "^10.9.1",
