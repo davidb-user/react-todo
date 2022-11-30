@@ -1,14 +1,13 @@
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/react";
-
 import Button from "./button";
 
-const getButton = (): HTMLElement => screen.getByRole("button");
+const getButton = () => screen.getByRole("button");
 
 describe("Button", () => {
-	describe("root element", () => {
-		describe("instantiation", () => {
+	describe("elements", () => {
+		describe("root element", () => {
 			it("should be created", () => {
 				render(<Button onClick={jest.fn()} isSelected={true} />);
 
@@ -23,7 +22,6 @@ describe("Button", () => {
 				it("should set selected class", () => {
 					render(<Button onClick={jest.fn()} isSelected={true} />);
 
-					expect(getButton()).toBeInTheDocument();
 					expect(getButton()).toHaveClass("selected");
 				});
 			});
@@ -32,7 +30,6 @@ describe("Button", () => {
 				it("should not set selected class", () => {
 					render(<Button onClick={jest.fn()} isSelected={false} />);
 
-					expect(getButton()).toBeInTheDocument();
 					expect(getButton()).not.toHaveClass("selected");
 				});
 			});

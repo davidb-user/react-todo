@@ -9,6 +9,10 @@ interface NoteRowProps {
 	note: Note;
 }
 
+export const classNames = {
+	noteRow: "note-row",
+};
+
 class NoteRow extends React.Component<NoteRowProps> {
 	onCompleteStatusChange = (newValue: boolean) => {
 		const updatedNote: Note = {
@@ -30,7 +34,7 @@ class NoteRow extends React.Component<NoteRowProps> {
 		const { note } = this.props;
 
 		return (
-			<div role="note-row" className="note-row">
+			<div className={classNames.noteRow}>
 				<Checkbox
 					isChecked={note.isComplete}
 					onChange={this.onCompleteStatusChange}

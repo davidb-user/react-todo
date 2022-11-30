@@ -1,29 +1,52 @@
 import React from "react";
 import { notesMock } from "../../../test/mockData";
-import { render, screen } from "@testing-library/react";
-import NotesList from "./notesList";
+import { render } from "@testing-library/react";
+import NotesList, { classNames } from "./notesList";
+import { classNames as notesListClassNames } from "../noteRow/noteRow";
+import { queryAllByClassName, queryByClassName } from "../../../test/queries";
 
-const getNotesList = (): HTMLElement => screen.getByRole("notes-list");
-const getNoteRows = (): HTMLElement[] => screen.getAllByRole("note-row");
+export const getNotesList = (container: Element) =>
+	queryByClassName(container, classNames.notesList);
+const getNoteRows = (container: Element) =>
+	queryAllByClassName(container, notesListClassNames.noteRow);
 
 describe("NotesList", () => {
-	describe("root element", () => {
-		describe("instantiation", () => {
+	describe("elements", () => {
+		describe("root element", () => {
 			it("should be created", () => {
-				render(<NotesList notes={notesMock} onNoteUpdated={jest.fn()} />);
+				const { container } = render(
+					<NotesList notes={notesMock} onNoteUpdated={jest.fn()} />
+				);
 
-				expect(getNotesList()).toBeInTheDocument();
+				expect(getNotesList(container)).toBeInTheDocument();
 			});
 		});
-	});
 
-	describe("children", () => {
-		it("should contain NotesList child", () => {
-			render(<NotesList notes={notesMock} onNoteUpdated={jest.fn()} />);
+		describe("rows", () => {
+			describe("zero rows", () => {
+				it("should not contain note rows", () => {
+					const { container } = render(
+						<NotesList notes={[]} onNoteUpdated={jest.fn()} />
+					);
 
-			expect(getNoteRows()).toHaveLength(notesMock.length);
-			getNoteRows().forEach((row) => {
-				expect(getNotesList()).toContainElement(row);
+					const notesList = getNotesList(container);
+					const rows = getNoteRows(notesList);
+
+					expect(rows).toHaveLength(0);
+				});
+			});
+
+			describe("more than zero rows", () => {
+				it("should contain note rows", () => {
+					const { container } = render(
+						<NotesList notes={notesMock} onNoteUpdated={jest.fn()} />
+					);
+
+					const notesList = getNotesList(container);
+					const rows = getNoteRows(notesList);
+
+					expect(rows).toHaveLength(notesMock.length);
+				});
 			});
 		});
 	});

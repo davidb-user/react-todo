@@ -8,10 +8,14 @@ interface NotesListProps {
 	notes: Note[];
 }
 
+export const classNames = {
+	notesList: "notes-list",
+};
+
 class NotesList extends React.Component<NotesListProps> {
 	render() {
 		return (
-			<div role={"notes-list"} className="notes-list">
+			<div className={classNames.notesList}>
 				{this.props.notes.map((note) => (
 					<NoteRow
 						key={note.id}

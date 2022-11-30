@@ -3,11 +3,11 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/react";
 import Checkbox from "./checkbox";
 
-const getInput = (): HTMLElement => screen.getByRole("checkbox");
+const getInput = () => screen.getByRole("checkbox");
 
 describe("Checkbox", () => {
-	describe("root element", () => {
-		describe("instantiation", () => {
+	describe("elements", () => {
+		describe("root element", () => {
 			it("should be created", () => {
 				render(<Checkbox isChecked={true} onChange={jest.fn()} />);
 

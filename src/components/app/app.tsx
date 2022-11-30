@@ -9,6 +9,10 @@ interface AppState {
 	notes: Note[];
 }
 
+export const classNames = {
+	app: "app",
+};
+
 class App extends React.Component<AppProps, AppState> {
 	constructor(props: AppProps) {
 		super(props);
@@ -26,7 +30,7 @@ class App extends React.Component<AppProps, AppState> {
 		const { notes } = this.state;
 
 		return (
-			<div role={"app"} className="app">
+			<div className="app">
 				<NotesList onNoteUpdated={this.onNoteUpdated} notes={notes} />
 			</div>
 		);

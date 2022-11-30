@@ -1,30 +1,30 @@
 import React from "react";
-import { act, create, ReactTestRenderer } from "react-test-renderer";
 import { render, screen } from "@testing-library/react";
-import NotesList from "../notesList/notesList";
-import App from "./app";
+import App, { classNames } from "./app";
+import { queryByClassName } from "../../../test/queries";
+import { getNotesList } from "../notesList/notesList.spec";
 
-const getApp = (): HTMLElement => screen.getByRole("app");
-const getNotesList = (): HTMLElement => screen.getByRole("notes-list");
+const getApp = (container: Element) =>
+	queryByClassName(container, classNames.app);
 
 describe("App", () => {
-	let testRenderer: ReactTestRenderer;
-
-	describe("root element", () => {
-		describe("instantiation", () => {
+	describe("elements", () => {
+		describe("root element", () => {
 			it("should be created", () => {
-				render(<App />);
+				const { container } = render(<App />);
 
-				expect(getApp()).toBeInTheDocument();
+				expect(getApp(container)).toBeInTheDocument();
 			});
 		});
-	});
 
-	describe("children", () => {
-		it("should contain NotesList child", () => {
-			render(<App />);
+		describe("notes list", () => {
+			it("should be created", () => {
+				const { container } = render(<App />);
 
-			expect(getApp()).toContainElement(getNotesList());
+				const app = getApp(container);
+
+				expect(getNotesList(app)).toBeInTheDocument();
+			});
 		});
 	});
 });

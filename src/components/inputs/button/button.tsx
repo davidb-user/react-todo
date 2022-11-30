@@ -9,16 +9,14 @@ interface ButtonProps extends React.PropsWithChildren {
 class Button extends React.Component<ButtonProps> {
 	render() {
 		const classNames = ["button"];
+
 		if (this.props.isSelected) {
 			classNames.push("selected");
 		}
 		const className = classNames.join(" ");
+
 		return (
-			<button
-				id="button-input"
-				onClick={this.props.onClick}
-				className={className}
-			>
+			<button onClick={this.props.onClick} className={className}>
 				{this.props.children}
 			</button>
 		);
