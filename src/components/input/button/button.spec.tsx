@@ -1,5 +1,6 @@
-import { act } from "react-dom/test-utils";
-import { create, ReactTestRenderer } from "react-test-renderer";
+import React from "react";
+import { act, create, ReactTestRenderer } from "react-test-renderer";
+import { testInputEvent } from "../../../../test/testInputEvent";
 import Button from "./button";
 
 describe("Button", () => {
@@ -9,7 +10,9 @@ describe("Button", () => {
 		describe("instantiation", () => {
 			it("should be created", () => {
 				act(() => {
-					testRenderer = create(<Button isSelected={true} />);
+					testRenderer = create(
+						<Button onClick={jest.fn()} isSelected={true} />
+					);
 				});
 				const button = testRenderer.root.findByType("button");
 
@@ -19,23 +22,14 @@ describe("Button", () => {
 		});
 	});
 
-	describe("root element", () => {
-		it("should create root element", () => {
-			act(() => {
-				testRenderer = create(<Button isSelected={true} />);
-			});
-			const button = testRenderer.root.findByType("button");
-
-			expect(button).toBeTruthy();
-		});
-	});
-
 	describe("props", () => {
 		describe("isSelected", () => {
 			describe("equals true", () => {
 				it("should set selected class", () => {
 					act(() => {
-						testRenderer = create(<Button isSelected={true} />);
+						testRenderer = create(
+							<Button onClick={jest.fn()} isSelected={true} />
+						);
 					});
 					const button = testRenderer.root.findByType("button");
 
@@ -46,12 +40,32 @@ describe("Button", () => {
 			describe("equals false", () => {
 				it("should not set selected class", () => {
 					act(() => {
-						testRenderer = create(<Button isSelected={false} />);
+						testRenderer = create(
+							<Button onClick={jest.fn()} isSelected={false} />
+						);
 					});
 					const button = testRenderer.root.findByType("button");
 
 					expect(button?.props.className).not.toContain("selected");
 				});
+			});
+		});
+	});
+
+	describe("events", () => {
+		describe("onClick", () => {
+			it("should call props onClick with value", () => {
+				const onChange = jest.fn();
+				const inputElementId = "button-input";
+
+				testInputEvent(<Button onClick={onChange} isSelected={false} />, [
+					{
+						inputElementId,
+						inputEventType: "click",
+					},
+				]);
+
+				expect(onChange).toHaveBeenCalledTimes(1);
 			});
 		});
 	});

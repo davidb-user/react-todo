@@ -16,7 +16,7 @@
 		"jsx": "react-jsx",
 		"strictNullChecks": false
 	},
-	"include": ["src"],
+	"include": ["src", "test"],
 	"ts-node": {
 		"compilerOptions": { "module": "CommonJS" }
 	}

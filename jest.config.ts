@@ -1,12 +1,12 @@
 import type { Config } from "jest";
 
 const jestConfig: Config = {
-	setupFiles:["./src/setupTests.ts"],
+	setupFiles: ["./test/setupTests.ts"],
 	rootDir: ".",
 	transform: {
 		"^.+\\.(ts|js)x?$": "ts-jest",
 	},
-	testRegex: "(/__test__/.*|(\\.|/)test)\\.(ts|js)x?$",
+	testRegex: "(/__test__/.*|(\\.|/)spec)\\.(ts|js)x?$",
 	moduleFileExtensions: ["tsx", "ts", "jsx", "js"],
 	verbose: true,
 	moduleNameMapper: {

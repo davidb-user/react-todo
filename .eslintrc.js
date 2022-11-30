@@ -17,5 +17,7 @@ module.exports = {
 		sourceType: "module",
 	},
 	plugins: ["react", "@typescript-eslint"],
-	rules: {},
+	rules: {
+		"testing-library/await-async-query": "off",
+	},
 };

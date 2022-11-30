@@ -1,8 +1,9 @@
 import React from "react";
 import "./button.css";
 
-interface ButtonProps {
+interface ButtonProps extends React.PropsWithChildren {
 	isSelected?: boolean;
+	onClick(): void;
 }
 
 class Button extends React.Component<ButtonProps> {
@@ -12,7 +13,15 @@ class Button extends React.Component<ButtonProps> {
 			classNames.push("selected");
 		}
 		const className = classNames.join(" ");
-		return <button className={className}></button>;
+		return (
+			<button
+				id="button-input"
+				onClick={this.props.onClick}
+				className={className}
+			>
+				{this.props.children}
+			</button>
+		);
 	}
 }
 

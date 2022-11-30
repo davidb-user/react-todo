@@ -1,6 +1,5 @@
-import { createRoot } from "react-dom/client";
-import { act } from "react-dom/test-utils";
-import { create, ReactTestRenderer } from "react-test-renderer";
+import React from "react";
+import { act, create, ReactTestRenderer } from "react-test-renderer";
 import NotesList from "../notesList/notesList";
 import App from "./app";
 
