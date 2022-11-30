@@ -11,7 +11,7 @@ interface NotesListProps {
 class NotesList extends React.Component<NotesListProps> {
 	render() {
 		return (
-			<div className="notes-list">
+			<div role={"notes-list"} className="notes-list">
 				{this.props.notes.map((note) => (
 					<NoteRow
 						key={note.id}

@@ -13,6 +13,13 @@ interface TextState {
 	editEnabled: boolean;
 }
 
+export const roles = {
+	clearInputButtonWrapper: "clear-input-button-wrapper",
+	valueLabel: "value-label",
+	textInputWrapper: "text-input-wrapper",
+	textInput: "text-input",
+};
+
 class TextInput extends React.Component<TextProps, TextState> {
 	constructor(props: TextProps) {
 		super(props);
@@ -46,22 +53,30 @@ class TextInput extends React.Component<TextProps, TextState> {
 
 	render() {
 		const showClearInputButton =
-			this.props.showClearInputButton && !this.state.editEnabled;
+			this.props.showClearInputButton && this.state.editEnabled;
 
 		return (
-			<div className="text-input">
-				<input
-					id="text-input"
-					value={this.props.value || ""}
-					type={"text"}
-					onChange={(e) => {
-						this.props.onChange(e.target.value);
-					}}
-					onDoubleClick={this.onInputDoubleClick}
-					onBlur={this.onInputBlur}
-					disabled={this.state.editEnabled}
-				/>
-				{showClearInputButton && <Button onClick={this.clearInput}>X</Button>}
+			<div role={roles.textInputWrapper} className="text-input">
+				{!this.state.editEnabled ? (
+					<div role={roles.valueLabel} onDoubleClick={this.onInputDoubleClick}>
+						{this.props.value}
+					</div>
+				) : (
+					<input
+						role={roles.textInput}
+						value={this.props.value || ""}
+						type={"text"}
+						onChange={(e) => {
+							this.props.onChange(e.target.value);
+						}}
+						onBlur={this.onInputBlur}
+					/>
+				)}
+				{showClearInputButton && (
+					<div role={roles.clearInputButtonWrapper}>
+						<Button onClick={this.clearInput}>X</Button>
+					</div>
+				)}
 			</div>
 		);
 	}

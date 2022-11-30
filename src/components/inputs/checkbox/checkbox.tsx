@@ -17,7 +17,7 @@ class Checkbox extends React.Component<CheckboxProps> {
 		return (
 			<input
 				type={"checkbox"}
-				id="checkbox-input"
+				role="checkbox-input"
 				className="checkbox"
 				checked={isChecked}
 				onChange={this.onChange}

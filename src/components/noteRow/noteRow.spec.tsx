@@ -1,52 +1,37 @@
 import React from "react";
-import { act, create, ReactTestRenderer } from "react-test-renderer";
 import { noteMock } from "../../../test/mockData";
-import Checkbox from "../input/checkbox/checkbox";
+import { render, screen } from "@testing-library/react";
 import NoteRow from "./noteRow";
 
-describe("NoteRow", () => {
-	let testRenderer: ReactTestRenderer;
+const getNoteRow = (): HTMLElement => screen.getByRole("note-row");
+const getNoteCompletionStatus = (): HTMLElement =>
+	screen.getByRole("note-completion-status");
+const getNoteContent = (): HTMLElement => screen.getByRole("note-content");
 
+describe("NoteRow", () => {
 	describe("root element", () => {
 		describe("instantiation", () => {
 			it("should be created", () => {
-				act(() => {
-					testRenderer = create(
-						<NoteRow note={noteMock} onNoteUpdated={jest.fn()} />
-					);
-				});
-				const noteRow = testRenderer.root.findByType("div");
+				render(<NoteRow note={noteMock} onNoteUpdated={jest.fn()} />);
 
-				expect(noteRow).toBeTruthy();
-				expect(noteRow.props.className).toEqual("note-row");
+				expect(getNoteRow()).toBeInTheDocument();
 			});
 		});
 	});
 
-	// describe("children", () => {
-	// 	it("should contain note status checkbox", () => {
-	// 		act(() => {
-	// 			testRenderer = create(
-	// 				<NoteRow note={noteMock} onNoteUpdated={jest.fn()} />
-	// 			);
-	// 		});
-	// 		const noteRow = testRenderer.root.findByType("div");
+	describe("children", () => {
+		it("should contain note status", () => {
+			render(<NoteRow note={noteMock} onNoteUpdated={jest.fn()} />);
 
-	// 		const noteStatusCheckbox = noteRow.findByType(Checkbox);
-	// 		expect(noteStatusCheckbox).toBeTruthy();
-	// 	});
+			expect(getNoteCompletionStatus()).toBeInTheDocument();
+			expect(getNoteRow()).toContainElement(getNoteCompletionStatus());
+		});
 
-	// 	it("should contain note content", () => {
-	// 		act(() => {
-	// 			testRenderer = create(
-	// 				<NoteRow note={noteMock} onNoteUpdated={jest.fn()} />
-	// 			);
-	// 		});
-	// 		const noteRow = testRenderer.root.findByType("div");
+		it("should contain note content", () => {
+			render(<NoteRow note={noteMock} onNoteUpdated={jest.fn()} />);
 
-	// 		const noteContent = noteRow.findByProps({ className: "note-content" });
-	// 		const content = noteContent.children[0];
-	// 		expect(content).toEqual(noteMock.content);
-	// 	});
-	// });
+			expect(getNoteContent()).toBeInTheDocument();
+			expect(getNoteRow()).toContainElement(getNoteContent());
+		});
+	});
 });
