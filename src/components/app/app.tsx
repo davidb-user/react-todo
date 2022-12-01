@@ -1,5 +1,6 @@
 import React from "react";
 import { Note } from "../../types/note";
+import TextInput from "../inputs/text/textInput";
 import NotesList from "../notesList/notesList";
 import "./app.css";
 
@@ -50,6 +51,7 @@ class App extends React.Component<AppProps, AppState> {
 
 		return (
 			<div className="app">
+				<TextInput value="" onChange={this.onChange} />
 				<NotesList
 					notes={notes}
 					onNoteUpdated={this.onNoteUpdated}
