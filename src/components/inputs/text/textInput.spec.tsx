@@ -124,8 +124,31 @@ describe("TextInput", () => {
 
 					await user.type(getInput(), eventValue);
 
-					eventValue.split("").forEach((value, index) => {
+					const eventValueChars = eventValue.split("");
+					expect(onChange).toHaveBeenCalledTimes(eventValueChars.length);
+					eventValueChars.forEach((value, index) => {
 						expect(onChange).nthCalledWith(index + 1, value);
+					});
+				});
+
+				describe("and doubleClickToEdit equals true", () => {
+					describe("after double clicking the input", () => {
+						it("should call props onChange with value", async () => {
+							const onChange = jest.fn();
+							const eventValue = "eventValue";
+							render(
+								<TextInput onChange={onChange} doubleClickToEdit={true} />
+							);
+
+							await fireEvent.dblClick(getInput());
+							await user.type(getInput(), eventValue);
+
+							const eventValueChars = eventValue.split("");
+							expect(onChange).toHaveBeenCalledTimes(eventValueChars.length);
+							eventValueChars.forEach((value, index) => {
+								expect(onChange).nthCalledWith(index + 1, value);
+							});
+						});
 					});
 				});
 			});
@@ -135,7 +158,7 @@ describe("TextInput", () => {
 					it("should disable text input", async () => {
 						render(<TextInput onChange={jest.fn()} doubleClickToEdit={true} />);
 
-						await user.dblClick(getInput());
+						await fireEvent.dblClick(getInput());
 						await fireEvent.blur(getInput());
 
 						await waitFor(() => {
@@ -153,7 +176,6 @@ describe("TextInput", () => {
 						await fireEvent.dblClick(getInput());
 
 						await waitFor(() => {
-							const input = getInput();
 							expect(getInput()).toBeEnabled();
 						});
 					});

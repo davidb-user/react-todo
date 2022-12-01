@@ -1,10 +1,14 @@
 import React from "react";
-import { Note } from "../../types/note";
+import { Note, NoteDetails, NoteId } from "../../types/note";
 import NoteRow from "../noteRow/noteRow";
 import "./notesList.css";
 
 interface NotesListProps {
-	onNoteUpdated: (note: Note) => void;
+	onNoteUpdated: (
+		updatedNoteId: NoteId,
+		updatedNoteDetails: Partial<NoteDetails>
+	) => void;
+	onRemoveNote: (noteId: NoteId) => void;
 	notes: Note[];
 }
 
@@ -21,6 +25,7 @@ class NotesList extends React.Component<NotesListProps> {
 						key={note.id}
 						note={note}
 						onNoteUpdated={this.props.onNoteUpdated}
+						onRemoveNote={this.props.onRemoveNote}
 					/>
 				))}
 			</div>

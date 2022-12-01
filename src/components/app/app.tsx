@@ -22,8 +22,27 @@ class App extends React.Component<AppProps, AppState> {
 		};
 	}
 
-	onNoteUpdated = (note: Note) => {
-		console.log(note);
+	onNoteUpdated = (
+		updatedNoteId: string,
+		updatedNoteDetails: Partial<Omit<Note, "id">>
+	) => {
+		const notes = this.state.notes.map((note) => {
+			return note.id === updatedNoteId
+				? { ...note, ...updatedNoteDetails }
+				: note;
+		});
+		this.setState({
+			notes,
+		});
+	};
+
+	onRemoveNote = (noteIdToRemove: string) => {
+		const notes = this.state.notes.filter((note) => {
+			return note.id !== noteIdToRemove;
+		});
+		this.setState({
+			notes,
+		});
 	};
 
 	render() {
@@ -31,7 +50,11 @@ class App extends React.Component<AppProps, AppState> {
 
 		return (
 			<div className="app">
-				<NotesList onNoteUpdated={this.onNoteUpdated} notes={notes} />
+				<NotesList
+					notes={notes}
+					onNoteUpdated={this.onNoteUpdated}
+					onRemoveNote={this.onRemoveNote}
+				/>
 			</div>
 		);
 	}

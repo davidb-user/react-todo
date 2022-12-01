@@ -4,10 +4,13 @@ function createId(): string {
 	return "id" + Math.random().toString(16).slice(2);
 }
 
-const generateNote = (): Note => ({
+export const generateNote = ({
+	isComplete,
+	content,
+}: Partial<Note> = {}): Note => ({
 	id: createId(),
-	content: `content ${createId()}`,
-	isComplete: false,
+	content: content || `content ${createId()}`,
+	isComplete: typeof isComplete === "boolean" ? isComplete : false,
 });
 
 function generateNotesList(length: number): Note[] {

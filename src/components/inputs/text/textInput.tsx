@@ -29,7 +29,6 @@ class TextInput extends React.Component<TextProps, TextState> {
 	};
 
 	onInputDoubleClick = () => {
-		console.log("test testes tests etes test est est ");
 		if (this.props.doubleClickToEdit) {
 			this.setState({
 				editEnabled: true,
@@ -62,8 +61,7 @@ class TextInput extends React.Component<TextProps, TextState> {
 						disabled={!this.state.editEnabled}
 					/>
 				</span>
-
-				{showClearInputButton && <Button onClick={this.clearInput}>X</Button>}
+				{showClearInputButton && <Button onClick={this.clearInput}>x</Button>}
 			</div>
 		);
 	}

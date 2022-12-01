@@ -46,7 +46,7 @@ describe("Checkbox", () => {
 		describe("onChange", () => {
 			describe("isChecked", () => {
 				describe("equals false", () => {
-					it("should call props onChange with value", async () => {
+					it("should call props onChange with true value", async () => {
 						const onChange = jest.fn();
 						const isChecked = false;
 						render(<Checkbox isChecked={isChecked} onChange={onChange} />);
@@ -60,7 +60,7 @@ describe("Checkbox", () => {
 				});
 
 				describe("equals true", () => {
-					it("should call props onChange with value", async () => {
+					it("should call props onChange with false value", async () => {
 						const onChange = jest.fn();
 						const isChecked = true;
 						render(<Checkbox isChecked={isChecked} onChange={onChange} />);
