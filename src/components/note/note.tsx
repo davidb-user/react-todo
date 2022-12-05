@@ -1,24 +1,24 @@
 import React from "react";
-import { Note, NoteId, NoteDetails } from "../../types/note";
+import { Note as NoteModel, NoteId, NoteDetails } from "../../models/note";
 import Button from "../inputs/button/button";
 import Checkbox from "../inputs/checkbox/checkbox";
-import TextInput from "../inputs/text/textInput";
-import "./noteRow.css";
+import Textbox from "../inputs/textbox/textbox";
+import "./note.css";
 
-interface NoteRowProps {
+interface NoteProps {
 	onNoteUpdated: (
 		updatedNoteId: NoteId,
 		updatedNoteDetails: Partial<NoteDetails>
 	) => void;
 	onRemoveNote: (noteId: NoteId) => void;
-	note: Note;
+	note: NoteModel;
 }
 
 export const classNames = {
-	noteRow: "note-row",
+	note: "note-row",
 };
 
-class NoteRow extends React.Component<NoteRowProps> {
+class Note extends React.Component<NoteProps> {
 	onCompleteStatusChange = (newValue: boolean) => {
 		const updatedNoteDetails: Partial<NoteDetails> = {
 			isComplete: newValue,
@@ -26,9 +26,9 @@ class NoteRow extends React.Component<NoteRowProps> {
 		this.props.onNoteUpdated(this.props.note.id, updatedNoteDetails);
 	};
 
-	onNodeContentChange = (nodeConent: Note["content"]) => {
+	onNoteContentChange = (noteContent: NoteModel["content"]) => {
 		const updatedNoteDetails: Partial<NoteDetails> = {
-			content: nodeConent,
+			content: noteContent,
 		};
 		this.props.onNoteUpdated(this.props.note.id, updatedNoteDetails);
 	};
@@ -41,15 +41,15 @@ class NoteRow extends React.Component<NoteRowProps> {
 		const { note } = this.props;
 
 		return (
-			<div className={classNames.noteRow}>
+			<div className={classNames.note}>
 				<Checkbox
 					isChecked={note.isComplete}
 					onChange={this.onCompleteStatusChange}
 				/>
-				<TextInput
-					value={note.content}
+				<Textbox
+					defaultValue={note.content}
 					doubleClickToEdit={true}
-					onChange={this.onNodeContentChange}
+					onSubmit={this.onNoteContentChange}
 				/>
 				<Button onClick={this.onRemoveNote}>🗑</Button>
 			</div>
@@ -57,4 +57,4 @@ class NoteRow extends React.Component<NoteRowProps> {
 	}
 }
 
-export default NoteRow;
+export default Note;

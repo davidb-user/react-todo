@@ -1,19 +1,23 @@
 import React from "react";
 import Button from "../button/button";
-import "./textInput.css";
+import "./textbox.css";
 
 interface TextProps {
-	onChange(newValue: string): void;
-	value?: string;
+	onSubmit(newValue: string): void;
+	defaultValue?: string;
 	doubleClickToEdit?: boolean;
 	showClearInputButton?: boolean;
+	clearValueAfterSubmit?: boolean;
 }
 
 interface TextState {
 	editEnabled: boolean;
+	value: string;
 }
 
-class TextInput extends React.Component<TextProps, TextState> {
+class Textbox extends React.Component<TextProps, TextState> {
+	private inputRef: HTMLInputElement;
+
 	constructor(props: TextProps) {
 		super(props);
 
@@ -21,11 +25,12 @@ class TextInput extends React.Component<TextProps, TextState> {
 
 		this.state = {
 			editEnabled,
+			value: this.props.defaultValue || "",
 		};
 	}
 
 	clearInput = () => {
-		this.props.onChange("");
+		this.setState({ value: "" });
 	};
 
 	onInputDoubleClick = () => {
@@ -33,15 +38,38 @@ class TextInput extends React.Component<TextProps, TextState> {
 			this.setState({
 				editEnabled: true,
 			});
+			setTimeout(() => {
+				this.inputRef.focus();
+				this.inputRef.select();
+			});
 		}
 	};
 
-	onInputBlur = () => {
+	onSubmit = () => {
 		if (this.props.doubleClickToEdit) {
 			this.setState({
 				editEnabled: false,
 			});
 		}
+		if (this.state.value) {
+			this.props.onSubmit(this.state.value);
+
+			if (this.props.clearValueAfterSubmit) {
+				this.setState({ value: "" });
+			}
+		}
+	};
+
+	onKeyDown = (event: React.KeyboardEvent) => {
+		if (event.key === "Enter") {
+			this.onSubmit();
+		}
+	};
+
+	onChange = (newValue: string) => {
+		this.setState({
+			value: newValue,
+		});
 	};
 
 	render() {
@@ -52,13 +80,18 @@ class TextInput extends React.Component<TextProps, TextState> {
 			<div className="text-input">
 				<span onDoubleClick={this.onInputDoubleClick}>
 					<input
-						value={this.props.value || ""}
+						value={this.state.value}
 						type={"text"}
 						onChange={(e) => {
-							this.props.onChange(e.target.value);
+							this.onChange(e.target.value);
 						}}
-						onBlur={this.onInputBlur}
+						onBlur={this.onSubmit}
+						onKeyDown={this.onKeyDown}
 						disabled={!this.state.editEnabled}
+						ref={(ref) => {
+							this.inputRef = ref;
+						}}
+						autoFocus
 					/>
 				</span>
 				{showClearInputButton && <Button onClick={this.clearInput}>x</Button>}
@@ -67,4 +100,4 @@ class TextInput extends React.Component<TextProps, TextState> {
 	}
 }
 
-export default TextInput;
+export default Textbox;

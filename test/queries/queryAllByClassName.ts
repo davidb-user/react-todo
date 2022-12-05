@@ -1,8 +1,8 @@
-export function queryAllByClassName(
-	element: Element,
+export function queryAllByClassName<T extends Element>(
+	element: T,
 	className: string
-): Element[] {
-	const elementsWithClassName = element.querySelectorAll(`.${className}`);
+): T[] {
+	const elementsWithClassName = element.querySelectorAll<T>(`.${className}`);
 
 	if (!elementsWithClassName || elementsWithClassName.length === 0) {
 		return [];

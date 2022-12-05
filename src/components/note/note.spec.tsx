@@ -1,36 +1,36 @@
 import React from "react";
 import { generateNote, noteMock } from "../../../test/mockData";
 import { fireEvent, render, screen } from "@testing-library/react";
-import NoteRow, { classNames } from "./noteRow";
+import Note, { classNames } from "./note";
 import { queryByClassName } from "../../../test/queries";
 import userEvent from "@testing-library/user-event";
 
-const getNoteRow = (container: HTMLElement) =>
-	queryByClassName(container, classNames.noteRow);
+const getNote = (container: HTMLElement) =>
+	queryByClassName(container, classNames.note);
 const getNoteCompletionStatusInput = () => screen.getByRole("checkbox");
-export const getNoteContentInput = () => screen.getByRole("textbox");
-export const getRemoveNoteButton = () => screen.getByRole("button");
+const getNoteContentInput = () => screen.getByRole("textbox");
+const getRemoveNoteButton = () => screen.getByRole("button");
 
-describe("NoteRow", () => {
+describe("Note", () => {
 	describe("elements", () => {
 		describe("root element", () => {
 			it("should be created", () => {
 				const { container } = render(
-					<NoteRow
+					<Note
 						note={noteMock}
 						onNoteUpdated={jest.fn()}
 						onRemoveNote={jest.fn()}
 					/>
 				);
 
-				expect(getNoteRow(container)).toBeInTheDocument();
+				expect(getNote(container)).toBeInTheDocument();
 			});
 		});
 
 		describe("status checkbox", () => {
 			it("should be created", () => {
 				render(
-					<NoteRow
+					<Note
 						note={noteMock}
 						onNoteUpdated={jest.fn()}
 						onRemoveNote={jest.fn()}
@@ -44,7 +44,7 @@ describe("NoteRow", () => {
 		describe("content text input", () => {
 			it("should be created", () => {
 				render(
-					<NoteRow
+					<Note
 						note={noteMock}
 						onNoteUpdated={jest.fn()}
 						onRemoveNote={jest.fn()}
@@ -58,7 +58,7 @@ describe("NoteRow", () => {
 		describe("remove note button", () => {
 			it("should be created", () => {
 				render(
-					<NoteRow
+					<Note
 						note={noteMock}
 						onNoteUpdated={jest.fn()}
 						onRemoveNote={jest.fn()}
@@ -86,7 +86,7 @@ describe("NoteRow", () => {
 							const onNoteUpdated = jest.fn();
 							const note = generateNote({ isComplete });
 							render(
-								<NoteRow
+								<Note
 									note={note}
 									onNoteUpdated={onNoteUpdated}
 									onRemoveNote={jest.fn()}
@@ -106,14 +106,14 @@ describe("NoteRow", () => {
 		});
 
 		describe("content text input", () => {
-			describe("onChange", () => {
+			describe("onSubmit", () => {
 				it(`should call props onChange with new content value`, async () => {
 					const onNoteUpdated = jest.fn();
 					const content = "content";
 					const newContent = "newContent";
 					const note = generateNote({ content });
 					render(
-						<NoteRow
+						<Note
 							note={note}
 							onNoteUpdated={onNoteUpdated}
 							onRemoveNote={jest.fn()}
@@ -122,13 +122,11 @@ describe("NoteRow", () => {
 
 					await fireEvent.dblClick(getNoteContentInput());
 					await user.type(getNoteContentInput(), newContent);
+					await user.type(getNoteContentInput(), "{enter}");
 
-					const newContentChars = newContent.split("");
-					expect(onNoteUpdated).toHaveBeenCalledTimes(newContentChars.length);
-					newContentChars.forEach((value, index) => {
-						expect(onNoteUpdated).nthCalledWith(index + 1, note.id, {
-							content: content + value,
-						});
+					expect(onNoteUpdated).toHaveBeenCalledTimes(1);
+					expect(onNoteUpdated).toHaveBeenCalledWith(note.id, {
+						content: `${content}${newContent}`,
 					});
 				});
 			});
@@ -139,7 +137,7 @@ describe("NoteRow", () => {
 				it(`should call props onRemoveNote with new content value`, async () => {
 					const onRemoveNote = jest.fn();
 					render(
-						<NoteRow
+						<Note
 							note={noteMock}
 							onNoteUpdated={jest.fn()}
 							onRemoveNote={onRemoveNote}

@@ -4,8 +4,8 @@
 	"scripts": {
 		"build": "webpack",
 		"start:dev": "webpack serve --config webpack.config.dev.ts",
-		"test": "jest",
-		"test:watch": "jest --watch",
+		"test": "jest --no-cache",
+		"test:watch": "jest --watch --no-cache",
 		"lint": "eslint . --ext .tsx --fix",
 		"format": "prettier --write \"**/*.{ts,tsx,md}\""
 	},

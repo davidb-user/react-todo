@@ -1,6 +1,8 @@
 import React from "react";
-import { Note } from "../../types/note";
-import TextInput from "../inputs/text/textInput";
+import { generateNote, noteMock } from "../../../test/mockData";
+import { Note, NoteDetails } from "../../models/note";
+import Checkbox from "../inputs/checkbox/checkbox";
+import Textbox from "../inputs/textbox/textbox";
 import NotesList from "../notesList/notesList";
 import "./app.css";
 
@@ -12,6 +14,9 @@ interface AppState {
 
 export const classNames = {
 	app: "app",
+	manageNotes: "manage-notes",
+	toggleCompleteAllNotes: "toggle-complete-all-notes",
+	createNoteContentInput: "create-note-content-input",
 };
 
 class App extends React.Component<AppProps, AppState> {
@@ -25,7 +30,7 @@ class App extends React.Component<AppProps, AppState> {
 
 	onNoteUpdated = (
 		updatedNoteId: string,
-		updatedNoteDetails: Partial<Omit<Note, "id">>
+		updatedNoteDetails: Partial<NoteDetails>
 	) => {
 		const notes = this.state.notes.map((note) => {
 			return note.id === updatedNoteId
@@ -37,25 +42,62 @@ class App extends React.Component<AppProps, AppState> {
 		});
 	};
 
-	onRemoveNote = (noteIdToRemove: string) => {
+	onRemoveNotes = (noteIdsToRemove: string[]) => {
 		const notes = this.state.notes.filter((note) => {
-			return note.id !== noteIdToRemove;
+			return !noteIdsToRemove.includes(note.id);
 		});
 		this.setState({
 			notes,
 		});
 	};
 
+	onSubmitNewNote = (noteContent: string) => {
+		const newNote = new Note({ content: noteContent, isComplete: false });
+		this.setState((prevState) => ({
+			notes: [...prevState.notes, newNote],
+		}));
+	};
+
+	onToggleCompleteAllChange = () => {
+		const areAllNotesComplete =
+			this.state.notes.length &&
+			this.state.notes.every((note) => note.isComplete);
+
+		this.setState((prevState) => ({
+			notes: prevState.notes.map((note) => ({
+				...note,
+				isComplete: !areAllNotesComplete,
+			})),
+		}));
+	};
+
 	render() {
 		const { notes } = this.state;
 
 		return (
-			<div className="app">
-				<TextInput value="" onChange={this.onChange} />
+			<div className={classNames.app}>
+				<div className={classNames.manageNotes}>
+					<div className={classNames.toggleCompleteAllNotes}>
+						<Checkbox
+							isChecked={
+								this.state.notes.length &&
+								this.state.notes.every((note) => note.isComplete)
+							}
+							onChange={this.onToggleCompleteAllChange}
+						/>
+					</div>
+					<div className={classNames.createNoteContentInput}>
+						<Textbox
+							defaultValue=""
+							onSubmit={this.onSubmitNewNote}
+							clearValueAfterSubmit={true}
+						/>
+					</div>
+				</div>
 				<NotesList
 					notes={notes}
 					onNoteUpdated={this.onNoteUpdated}
-					onRemoveNote={this.onRemoveNote}
+					onRemoveNotes={this.onRemoveNotes}
 				/>
 			</div>
 		);
