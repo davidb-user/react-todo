@@ -1,2 +1,18 @@
 .button {
+	font-size: inherit;
+	font-family: inherit;
+	appearance: none;
+	border: none;
+	background: none;
+	user-select: none;
+	padding: 4px 8px;
+	border-radius: 4px;
+}
+
+.button:not(.selected):hover {
+	border: 1px solid lightpink;
+}
+
+.button.selected {
+	border: 1px solid pink;
 }

@@ -1,2 +1,33 @@
 .text-input {
+	display: flex;
+}
+
+.text-input,
+.text-input input[type="text"] {
+	background: none;
+	flex-grow: 1;
+	font-size: inherit;
+	font-family: cursive;
+	outline: none;
+	appearance: none;
+	border: none;
+	padding: 9px;
+	padding-left: 10px;
+}
+
+.text-input input[type="text"][disabled] {
+	background: none;
+	color: black;
+}
+
+.text-input input[type="text"]::placeholder {
+	font-style: italic;
+	font-weight: 100;
+	font-size: 1em;
+	color: var(--border-grey);
+}
+
+.text-input.border-on-focus input[type="text"]:focus {
+	border: solid var(--border-grey) 1px;
+	box-shadow: inset 0px 0px 5px 1px var(--border-grey);
 }

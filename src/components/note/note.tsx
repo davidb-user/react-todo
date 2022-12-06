@@ -15,7 +15,7 @@ interface NoteProps {
 }
 
 export const classNames = {
-	note: "note-row",
+	note: "note",
 };
 
 class Note extends React.Component<NoteProps> {

@@ -1,2 +1,30 @@
-.notes-list {
+.notes-info {
+	display: flex;
+	align-items: center;
+}
+
+.notes-management {
+	padding: 10px 30px;
+	display: grid;
+	grid-template-columns: 1fr 3fr 1fr;
+	font-size: 0.75em;
+	background-color: var(--notebook-background);
+	border: 1px solid var(--notebook-line);
+	margin-bottom: 15px;
+	border-radius: 40px;
+	margin-top: 12px;
+}
+
+.notes-filter-buttons {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.notes-filter-buttons > :not(:last-child) {
+	margin-right: 10px;
+}
+
+.clear-completed-notes-button {
+	text-align: right;
 }

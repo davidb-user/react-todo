@@ -1,13 +1,12 @@
 import React from "react";
-import Button from "../button/button";
 import "./textbox.css";
 
 interface TextProps {
 	onSubmit(newValue: string): void;
 	defaultValue?: string;
 	doubleClickToEdit?: boolean;
-	showClearInputButton?: boolean;
 	clearValueAfterSubmit?: boolean;
+	placeholderText?: string;
 }
 
 interface TextState {
@@ -51,12 +50,11 @@ class Textbox extends React.Component<TextProps, TextState> {
 				editEnabled: false,
 			});
 		}
-		if (this.state.value) {
-			this.props.onSubmit(this.state.value);
 
-			if (this.props.clearValueAfterSubmit) {
-				this.setState({ value: "" });
-			}
+		this.props.onSubmit(this.state.value);
+
+		if (this.props.clearValueAfterSubmit) {
+			this.setState({ value: "" });
 		}
 	};
 
@@ -73,28 +71,32 @@ class Textbox extends React.Component<TextProps, TextState> {
 	};
 
 	render() {
-		const showClearInputButton =
-			this.props.showClearInputButton && this.state.editEnabled;
+		const classNames = ["text-input"];
+
+		if (this.props.doubleClickToEdit) {
+			classNames.push("border-on-focus");
+		}
 
 		return (
-			<div className="text-input">
-				<span onDoubleClick={this.onInputDoubleClick}>
-					<input
-						value={this.state.value}
-						type={"text"}
-						onChange={(e) => {
-							this.onChange(e.target.value);
-						}}
-						onBlur={this.onSubmit}
-						onKeyDown={this.onKeyDown}
-						disabled={!this.state.editEnabled}
-						ref={(ref) => {
-							this.inputRef = ref;
-						}}
-						autoFocus
-					/>
-				</span>
-				{showClearInputButton && <Button onClick={this.clearInput}>x</Button>}
+			<div
+				className={classNames.join(" ")}
+				onDoubleClick={this.onInputDoubleClick}
+			>
+				<input
+					value={this.state.value}
+					type={"text"}
+					onChange={(e) => {
+						this.onChange(e.target.value);
+					}}
+					onBlur={this.onSubmit}
+					onKeyDown={this.onKeyDown}
+					disabled={!this.state.editEnabled}
+					ref={(ref) => {
+						this.inputRef = ref;
+					}}
+					autoFocus
+					placeholder={this.props.placeholderText}
+				/>
 			</div>
 		);
 	}

@@ -1,4 +1,3 @@
-import { notEqual } from "assert";
 import React from "react";
 import { Note as NoteModel, NoteDetails, NoteId } from "../../models/note";
 import Button from "../inputs/button/button";
@@ -26,7 +25,7 @@ interface NotesListState {
 
 export const classNames = {
 	notesList: "notes-list",
-	notes: "note-rows",
+	notes: "notes",
 	notesManagement: "notes-management",
 	notesInfo: "notes-info",
 	notesFilterButtons: "notes-filter-buttons",
@@ -89,6 +88,9 @@ class NotesList extends React.Component<NotesListProps, NotesListState> {
 
 		const filteredNotes = this.getFilteredNotes(activeFilter, notes);
 
+		const completedNotesLength = this.props.notes.filter(
+			(note) => !note.isComplete
+		).length;
 		return (
 			<div className={classNames.notesList}>
 				<div role={"list"} className={classNames.notes}>
@@ -103,22 +105,27 @@ class NotesList extends React.Component<NotesListProps, NotesListState> {
 						))}
 					</div>
 				</div>
-				<div className={classNames.notesManagement}>
-					<div className={classNames.notesInfo}>
-						{this.props.notes.filter((note) => !note.isComplete).length} items
-						left
+				{notes.length > 0 && (
+					<div className={classNames.notesManagement}>
+						<div className={classNames.notesInfo}>
+							<span>
+								{completedNotesLength} item
+								{completedNotesLength === 1 ? "" : "s"} left
+							</span>
+						</div>
+						<div className={classNames.notesFilterButtons}>
+							{this.getFilterButtons(activeFilter)}
+						</div>
+						<div className={classNames.clearCompletedNotesButton}>
+							{this.props.notes.filter((note) => note.isComplete).length !==
+								0 && (
+								<Button onClick={this.onClearCompletedNotes}>
+									Clear completed
+								</Button>
+							)}
+						</div>
 					</div>
-					<div className={classNames.notesFilterButtons}>
-						{this.getFilterButtons(activeFilter)}
-					</div>
-					<div className={classNames.clearCompletedNotesButton}>
-						{this.props.notes.filter((note) => note.isComplete).length && (
-							<Button onClick={this.onClearCompletedNotes}>
-								Clear completed
-							</Button>
-						)}
-					</div>
-				</div>
+				)}
 			</div>
 		);
 	}

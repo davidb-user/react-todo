@@ -4,7 +4,6 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import Textbox from "./textbox";
 
 const getInput = () => screen.queryByRole("textbox");
-const getClearInputButton = () => screen.queryByRole("button");
 
 describe("Textbox", () => {
 	describe("elements", () => {
@@ -13,14 +12,6 @@ describe("Textbox", () => {
 				render(<Textbox onSubmit={jest.fn()} />);
 
 				expect(getInput()).toBeInTheDocument();
-			});
-		});
-
-		describe("clear input button", () => {
-			it("should be created", () => {
-				render(<Textbox onSubmit={jest.fn()} showClearInputButton={true} />);
-
-				expect(getClearInputButton()).toBeInTheDocument();
 			});
 		});
 	});
@@ -70,13 +61,14 @@ describe("Textbox", () => {
 		describe("text input", () => {
 			describe("onSubmit", () => {
 				describe("input is empty", () => {
-					it("should not call props onSubmit", async () => {
+					it("should call props onSubmit", async () => {
 						const onSubmit = jest.fn();
 						render(<Textbox onSubmit={onSubmit} />);
 
 						await user.type(getInput(), "{enter}");
 
-						expect(onSubmit).toHaveBeenCalledTimes(0);
+						expect(onSubmit).toHaveBeenCalledTimes(1);
+						expect(onSubmit).toHaveBeenCalledWith("");
 					});
 				});
 
@@ -169,27 +161,6 @@ describe("Textbox", () => {
 							expect(getInput()).toBeEnabled();
 						});
 					});
-				});
-			});
-		});
-
-		describe("clear input button", () => {
-			describe("onClick", () => {
-				it("should clear the text value", async () => {
-					const onSubmit = jest.fn();
-					const textValue = "textValue";
-					render(
-						<Textbox
-							onSubmit={onSubmit}
-							defaultValue={textValue}
-							showClearInputButton={true}
-						/>
-					);
-
-					await user.click(getClearInputButton());
-					await user.type(getInput(), "{enter}");
-
-					expect(onSubmit).toBeCalledTimes(0);
 				});
 			});
 		});

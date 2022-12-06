@@ -4,8 +4,6 @@ import {
 	fireEvent,
 	getQueriesForElement,
 	render,
-	screen,
-	waitFor,
 } from "@testing-library/react";
 import NotesList, { classNames, NotesFilter } from "./notesList";
 import { classNames as notesListClassNames } from "../note/note";
@@ -83,7 +81,7 @@ describe("NotesList", () => {
 
 		describe("notes info", () => {
 			describe("no notes", () => {
-				it("should display rows count", () => {
+				it("should not display info", () => {
 					const { container } = render(
 						<NotesList
 							notes={[]}
@@ -94,25 +92,80 @@ describe("NotesList", () => {
 
 					const noteInfo = getNoteInfo(container);
 
-					expect(noteInfo.innerHTML).toMatch(/^0 /);
+					expect(noteInfo).toBeNull();
 				});
 			});
 
 			describe("notes available", () => {
-				it("should display rows count", () => {
-					const { container } = render(
-						<NotesList
-							notes={notesMock}
-							onNoteUpdated={jest.fn()}
-							onRemoveNotes={jest.fn()}
-						/>
-					);
+				describe("many notes not completed", () => {
+					it("should display incomplete notes count", () => {
+						const notes = [
+							generateNote({ isComplete: true }),
+							generateNote({ isComplete: false }),
+							generateNote({ isComplete: false }),
+							generateNote({ isComplete: false }),
+						];
+						const { container } = render(
+							<NotesList
+								notes={notes}
+								onNoteUpdated={jest.fn()}
+								onRemoveNotes={jest.fn()}
+							/>
+						);
 
-					const noteInfo = getNoteInfo(container);
+						const noteInfo = getNoteInfo(container);
 
-					expect(noteInfo.innerHTML).toMatch(
-						new RegExp(`^${notesMock.length} `)
-					);
+						const incompleteNotes = notes.filter(
+							({ isComplete }) => !isComplete
+						);
+						expect(noteInfo.innerHTML).toMatch(
+							new RegExp(`${incompleteNotes.length} items `)
+						);
+					});
+				});
+
+				describe("no uncompleted notes", () => {
+					it("should display zero notes count", () => {
+						const notes = [
+							generateNote({ isComplete: true }),
+							generateNote({ isComplete: true }),
+							generateNote({ isComplete: true }),
+							generateNote({ isComplete: true }),
+						];
+						const { container } = render(
+							<NotesList
+								notes={notes}
+								onNoteUpdated={jest.fn()}
+								onRemoveNotes={jest.fn()}
+							/>
+						);
+
+						const noteInfo = getNoteInfo(container);
+
+						expect(noteInfo.innerHTML).toMatch(new RegExp(/0 items /));
+					});
+				});
+
+				describe("one notes not completed", () => {
+					it("should display incomplete note count", () => {
+						const notes = [
+							generateNote({ isComplete: true }),
+							generateNote({ isComplete: true }),
+							generateNote({ isComplete: true }),
+							generateNote({ isComplete: false }),
+						];
+						const { container } = render(
+							<NotesList
+								notes={notes}
+								onNoteUpdated={jest.fn()}
+								onRemoveNotes={jest.fn()}
+							/>
+						);
+
+						const noteInfo = getNoteInfo(container);
+
+						expect(noteInfo.innerHTML).toMatch(new RegExp(/1 item /));
+					});
 				});
 			});
 		});
@@ -123,7 +176,7 @@ describe("NotesList", () => {
 				(filter: NotesFilter) => {
 					const { container } = render(
 						<NotesList
-							notes={[]}
+							notes={notesMock}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
 						/>
@@ -141,7 +194,7 @@ describe("NotesList", () => {
 				it("should not display button", () => {
 					const { container } = render(
 						<NotesList
-							notes={[]}
+							notes={[generateNote({ isComplete: false })]}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
 						/>
@@ -181,31 +234,31 @@ describe("NotesList", () => {
 			user = userEvent.setup();
 		});
 
-		describe("note row", () => {
+		describe("note", () => {
 			describe("onNoteUpdated", () => {
 				describe("content text input", () => {
 					it(`should call props onNoteUpdated with new content value`, async () => {
 						const onNoteUpdated = jest.fn();
 						const content = "content";
 						const newContent = "newContent";
-						const note = generateNote({ content });
+						const notes = [generateNote({ content })];
 						const { container } = render(
 							<NotesList
-								notes={[note]}
+								notes={notes}
 								onNoteUpdated={onNoteUpdated}
 								onRemoveNotes={jest.fn()}
 							/>
 						);
 
-						const row = getNotes(container)[0];
+						const note = getNotes(container)[0];
 						const noteContentInput =
-							getQueriesForElement(row).getByRole("textbox");
+							getQueriesForElement(note).getByRole("textbox");
 						await fireEvent.dblClick(noteContentInput);
 						await user.type(noteContentInput, newContent);
 						await user.type(noteContentInput, "{enter}");
 
 						expect(onNoteUpdated).toHaveBeenCalledTimes(1);
-						expect(onNoteUpdated).toHaveBeenCalledWith(note.id, {
+						expect(onNoteUpdated).toHaveBeenCalledWith(notes[0].id, {
 							content: `${content}${newContent}`,
 						});
 					});
@@ -215,24 +268,23 @@ describe("NotesList", () => {
 					it(`should call props onNoteUpdated with new content value`, async () => {
 						const onNoteUpdated = jest.fn();
 						const content = "content";
-						const newContent = "newContent";
-						const note = generateNote({ content });
+						const notes = [generateNote({ content })];
 						const { container } = render(
 							<NotesList
-								notes={[note]}
+								notes={notes}
 								onNoteUpdated={onNoteUpdated}
 								onRemoveNotes={jest.fn()}
 							/>
 						);
 
-						const row = getNotes(container)[0];
+						const note = getNotes(container)[0];
 						const noteContentInput =
-							getQueriesForElement(row).getByRole("checkbox");
+							getQueriesForElement(note).getByRole("checkbox");
 
 						await user.click(noteContentInput);
 
 						expect(onNoteUpdated).toHaveBeenCalledTimes(1);
-						expect(onNoteUpdated).toHaveBeenCalledWith(note.id, {
+						expect(onNoteUpdated).toHaveBeenCalledWith(notes[0].id, {
 							isComplete: true,
 						});
 					});
@@ -251,9 +303,9 @@ describe("NotesList", () => {
 							/>
 						);
 
-						const row = getNotes(container)[0];
+						const note = getNotes(container)[0];
 						const removeNoteButton =
-							getQueriesForElement(row).getByRole("button");
+							getQueriesForElement(note).getByRole("button");
 						await user.click(removeNoteButton);
 
 						expect(onRemoveNotes).toHaveBeenCalledTimes(1);

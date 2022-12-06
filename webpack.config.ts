@@ -1,5 +1,5 @@
 const path = require("path");
-const HtmlWebpackConfig = require("html-webpack-plugin");
+import HtmlWebpackConfig from "html-webpack-plugin";
 import { Configuration } from "webpack";
 
 const config: Configuration = {
@@ -15,7 +15,7 @@ const config: Configuration = {
 			},
 			{
 				test: /\.css$/i,
-				use: ["css-loader"],
+				use: ["style-loader", "css-loader"],
 			},
 		],
 	},

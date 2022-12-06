@@ -11,3 +11,11 @@ This project can be started using the script `npm run start:dev`.
 ## Tests
 
 Tests for the project could be start using the script `npm run test`.
+
+## Linting and formatting
+
+For linting and formatting, the following scripts could be used: `npm run lint` and `npm run format`.
+
+## Usage example
+
+![usage example](./docs/assets/usage-example.png)

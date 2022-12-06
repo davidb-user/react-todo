@@ -1,11 +1,5 @@
 import React from "react";
-import {
-	fireEvent,
-	getQueriesForElement,
-	render,
-	screen,
-	waitFor,
-} from "@testing-library/react";
+import { getQueriesForElement, render } from "@testing-library/react";
 import App, { classNames } from "./app";
 import { queryByClassName, queryBySelector } from "../../../test/queries";
 import { getNotes, getNotesList } from "../notesList/notesList.spec";
@@ -13,14 +7,22 @@ import userEvent from "@testing-library/user-event";
 
 const getApp = (container: HTMLElement) =>
 	queryByClassName(container, classNames.app);
-const getToggleCompleteAllNotes = (container: HTMLElement) =>
-	getQueriesForElement(
-		queryByClassName(container, classNames.toggleCompleteAllNotes)
-	).findByRole("checkbox");
+const getToggleCompleteAllNotes = (container: HTMLElement) => {
+	const toggleCompleteAllNotesWrapper = queryByClassName(
+		container,
+		classNames.toggleCompleteAllNotes
+	);
+	if (!toggleCompleteAllNotesWrapper) {
+		return null;
+	}
+	return getQueriesForElement(toggleCompleteAllNotesWrapper).queryByRole(
+		"checkbox"
+	);
+};
 const getCreateNoteContentInput = (container: HTMLElement) =>
 	getQueriesForElement(
 		queryByClassName(container, classNames.createNoteContentInput)
-	).findByRole("textbox", {});
+	).queryByRole("textbox", {});
 
 async function createNote(
 	user: ReturnType<typeof userEvent["setup"]>,
@@ -28,8 +30,12 @@ async function createNote(
 	content: string,
 	isCompleted?: boolean
 ) {
-	await user.type(await getCreateNoteContentInput(app), content);
-	await user.type(await getCreateNoteContentInput(app), "{enter}");
+	if (!content) {
+		await user.type(await getCreateNoteContentInput(app), "{enter}");
+	} else {
+		await user.type(await getCreateNoteContentInput(app), content);
+		await user.type(await getCreateNoteContentInput(app), "{enter}");
+	}
 
 	if (isCompleted) {
 		const allCheckboxes = await getQueriesForElement(
@@ -73,16 +79,18 @@ describe("App", () => {
 
 				const app = getApp(container);
 
+				await createNote(user, app, "content");
+
 				expect(await getToggleCompleteAllNotes(app)).toBeInTheDocument();
 			});
 
 			describe("no notes", () => {
-				it(`should not be checked`, async () => {
+				it(`should not be created`, async () => {
 					const { container } = render(<App />);
 
 					const app = getApp(container);
 
-					expect(await getToggleCompleteAllNotes(app)).not.toBeChecked();
+					expect(await getToggleCompleteAllNotes(app)).toBeNull();
 				});
 			});
 
@@ -169,11 +177,8 @@ describe("App", () => {
 					await user.click(await getToggleCompleteAllNotes(app));
 					const rows = getNotes(app);
 
-					for (const row of rows) {
-						let checkbox: HTMLInputElement;
-						checkbox = (await getQueriesForElement(row).getByRole(
-							"checkbox"
-						)) as HTMLInputElement;
+					for (const note of rows) {
+						const checkbox = getQueriesForElement(note).getByRole("checkbox");
 						expect(checkbox).not.toBeChecked();
 					}
 				});
@@ -193,11 +198,10 @@ describe("App", () => {
 					await user.click(await getToggleCompleteAllNotes(app));
 					const rows = getNotes(app);
 
-					for (const row of rows) {
-						let checkbox: HTMLInputElement;
-						checkbox = (await getQueriesForElement(row).getByRole(
+					for (const note of rows) {
+						const checkbox = getQueriesForElement(note).getByRole(
 							"checkbox"
-						)) as HTMLInputElement;
+						) as HTMLInputElement;
 						expect(checkbox).toBeChecked();
 					}
 				});
@@ -218,11 +222,10 @@ describe("App", () => {
 					await user.click(await getToggleCompleteAllNotes(app));
 					const rows = getNotes(app);
 
-					for (const row of rows) {
-						let checkbox: HTMLInputElement;
-						checkbox = (await getQueriesForElement(row).getByRole(
+					for (const note of rows) {
+						const checkbox = getQueriesForElement(note).getByRole(
 							"checkbox"
-						)) as HTMLInputElement;
+						) as HTMLInputElement;
 						expect(checkbox).toBeChecked();
 					}
 				});
@@ -231,8 +234,21 @@ describe("App", () => {
 
 		describe("create note content input", () => {
 			describe("onSubmit", () => {
+				describe("note content is empty", () => {
+					it(`should not create a new note`, async () => {
+						const content = "";
+						const { container } = render(<App />);
+						const app = getApp(container);
+
+						await createNote(user, app, content);
+
+						const rows = getNotes(app);
+						expect(rows).toHaveLength(0);
+					});
+				});
+
 				describe("no notes available", () => {
-					it(`should add new note`, async () => {
+					it(`should add a new note`, async () => {
 						const content = "content";
 						const { container } = render(<App />);
 						const app = getApp(container);
@@ -260,14 +276,14 @@ describe("App", () => {
 
 						const rows = getNotes(app);
 						expect(rows).toHaveLength(contents.length);
-						rows.forEach((row, index) => {
-							expect(queryBySelector(row, "input[type='text']")).toHaveValue(
+						rows.forEach((note, index) => {
+							expect(queryBySelector(note, "input[type='text']")).toHaveValue(
 								contents[index]
 							);
 						});
 					});
 
-					it(`should claer input after adding new note`, async () => {
+					it(`should clear input after adding new note`, async () => {
 						const content = "content";
 						const { container } = render(<App />);
 						const app = getApp(container);

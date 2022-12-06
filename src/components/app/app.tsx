@@ -1,5 +1,4 @@
 import React from "react";
-import { generateNote, noteMock } from "../../../test/mockData";
 import { Note, NoteDetails } from "../../models/note";
 import Checkbox from "../inputs/checkbox/checkbox";
 import Textbox from "../inputs/textbox/textbox";
@@ -17,6 +16,7 @@ export const classNames = {
 	manageNotes: "manage-notes",
 	toggleCompleteAllNotes: "toggle-complete-all-notes",
 	createNoteContentInput: "create-note-content-input",
+	appWrapper: "app-wrapper",
 };
 
 class App extends React.Component<AppProps, AppState> {
@@ -32,14 +32,18 @@ class App extends React.Component<AppProps, AppState> {
 		updatedNoteId: string,
 		updatedNoteDetails: Partial<NoteDetails>
 	) => {
-		const notes = this.state.notes.map((note) => {
-			return note.id === updatedNoteId
-				? { ...note, ...updatedNoteDetails }
-				: note;
-		});
-		this.setState({
-			notes,
-		});
+		if (updatedNoteDetails.content === "") {
+			this.onRemoveNotes([updatedNoteId]);
+		} else {
+			const notes = this.state.notes.map((note) => {
+				return note.id === updatedNoteId
+					? { ...note, ...updatedNoteDetails }
+					: note;
+			});
+			this.setState({
+				notes,
+			});
+		}
 	};
 
 	onRemoveNotes = (noteIdsToRemove: string[]) => {
@@ -52,6 +56,10 @@ class App extends React.Component<AppProps, AppState> {
 	};
 
 	onSubmitNewNote = (noteContent: string) => {
+		if (noteContent === "") {
+			return;
+		}
+
 		const newNote = new Note({ content: noteContent, isComplete: false });
 		this.setState((prevState) => ({
 			notes: [...prevState.notes, newNote],
@@ -75,30 +83,36 @@ class App extends React.Component<AppProps, AppState> {
 		const { notes } = this.state;
 
 		return (
-			<div className={classNames.app}>
-				<div className={classNames.manageNotes}>
-					<div className={classNames.toggleCompleteAllNotes}>
-						<Checkbox
-							isChecked={
-								this.state.notes.length &&
-								this.state.notes.every((note) => note.isComplete)
-							}
-							onChange={this.onToggleCompleteAllChange}
-						/>
+			<div className={classNames.appWrapper}>
+				<div className={classNames.app}>
+					<h1>TODOS</h1>
+					<div className={classNames.manageNotes}>
+						{notes.length > 0 && (
+							<div className={classNames.toggleCompleteAllNotes}>
+								<Checkbox
+									isChecked={
+										this.state.notes.length &&
+										this.state.notes.every((note) => note.isComplete)
+									}
+									onChange={this.onToggleCompleteAllChange}
+								/>
+							</div>
+						)}
+						<div className={classNames.createNoteContentInput}>
+							<Textbox
+								defaultValue=""
+								onSubmit={this.onSubmitNewNote}
+								clearValueAfterSubmit={true}
+								placeholderText={"Describe here the task to do..."}
+							/>
+						</div>
 					</div>
-					<div className={classNames.createNoteContentInput}>
-						<Textbox
-							defaultValue=""
-							onSubmit={this.onSubmitNewNote}
-							clearValueAfterSubmit={true}
-						/>
-					</div>
+					<NotesList
+						notes={notes}
+						onNoteUpdated={this.onNoteUpdated}
+						onRemoveNotes={this.onRemoveNotes}
+					/>
 				</div>
-				<NotesList
-					notes={notes}
-					onNoteUpdated={this.onNoteUpdated}
-					onRemoveNotes={this.onRemoveNotes}
-				/>
 			</div>
 		);
 	}

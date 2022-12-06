@@ -15,12 +15,15 @@ class Checkbox extends React.Component<CheckboxProps> {
 	render() {
 		const { isChecked } = this.props;
 		return (
-			<input
-				type={"checkbox"}
-				className="checkbox"
-				checked={isChecked}
-				onChange={this.onChange}
-			/>
+			<div className="checkbox-wrapper">
+				<input
+					type={"checkbox"}
+					className="checkbox"
+					checked={isChecked}
+					onChange={this.onChange}
+				/>
+				{isChecked === true && <span className="checkmark">✔️</span>}
+			</div>
 		);
 	}
 }
